@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#0b0f14">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" type="image/png" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<title>Venus EPS</title>
+<style>
+  /* ------------------------------------------------------------
+     Noodverlichting-thema: donker (blackout!), amber accenten,
+     alles self-contained — geen externe fonts of CDN's, want
+     tijdens een stroomuitval is er mogelijk geen internet.
+     ------------------------------------------------------------ */
+  :root {
+    --bg: #0b0f14;
+    --panel: #131a22;
+    --line: #22303d;
+    --tekst: #e8eaed;
+    --dim: #8a97a3;
+    --amber: #ffb020;
+    --groen: #4ade80;
+    --rood: #f87171;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  html, body { height: 100%; }
+  body {
+    background: var(--bg);
+    color: var(--tekst);
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    display: flex; flex-direction: column;
+    min-height: 100dvh;
+    padding: 20px 16px calc(16px + env(safe-area-inset-bottom));
+    max-width: 480px; margin: 0 auto;
+  }
+  header { text-align: center; margin-bottom: 8px; }
+  header h1 {
+    font-size: 15px; font-weight: 600; letter-spacing: .22em;
+    text-transform: uppercase; color: var(--dim);
+  }
+  header h1 b { color: var(--amber); font-weight: 700; }
+  #devnaam {
+    font-family: ui-monospace, Menlo, Consolas, monospace;
+    font-size: 12px; color: var(--dim); margin-top: 4px; min-height: 16px;
+  }
+
+  /* --- Het stopcontact: signature element ----------------------- */
+  #socketwrap { flex: 1; display: flex; align-items: center; justify-content: center; padding: 12px 0; }
+  #socket {
+    width: min(64vw, 250px); aspect-ratio: 1; border-radius: 50%;
+    background: radial-gradient(circle at 35% 30%, #1b2530, #10161d 70%);
+    border: 3px solid var(--line);
+    position: relative; cursor: pointer;
+    transition: box-shadow .4s, border-color .4s;
+    touch-action: manipulation;
+  }
+  /* aardpin bovenaan (Belgisch type E) */
+  #socket::before {
+    content: ""; position: absolute; left: 50%; top: 22%;
+    width: 11%; aspect-ratio: 1; border-radius: 50%;
+    transform: translateX(-50%);
+    background: #2c3946; border: 2px solid var(--line);
+    transition: background .4s;
+  }
+  /* de twee gaten */
+  .gat {
+    position: absolute; top: 55%; width: 13%; aspect-ratio: 1;
+    border-radius: 50%; background: #05080b;
+    border: 2px solid var(--line);
+    transform: translateY(-50%);
+    transition: box-shadow .4s;
+  }
+  .gat.links  { left: 26%; }
+  .gat.rechts { right: 26%; }
+
+  #socket.aan { border-color: var(--groen); box-shadow: 0 0 42px rgba(74,222,128,.35), inset 0 0 30px rgba(74,222,128,.08); }
+  #socket.aan .gat { box-shadow: 0 0 14px rgba(74,222,128,.8), inset 0 0 6px rgba(74,222,128,.6); }
+  #socket.aan::before { background: var(--groen); }
+  #socket.bezig { border-color: var(--amber); animation: puls 1s infinite; }
+  @keyframes puls {
+    0%,100% { box-shadow: 0 0 12px rgba(255,176,32,.15); }
+    50%     { box-shadow: 0 0 34px rgba(255,176,32,.5); }
+  }
+  #socket:active { transform: scale(.97); }
+  @media (prefers-reduced-motion: reduce) { #socket.bezig { animation: none; } }
+
+  #staat {
+    text-align: center; font-size: 20px; font-weight: 700; min-height: 28px;
+    margin-bottom: 2px;
+  }
+  #staat.aan { color: var(--groen); }
+  #staat.uit { color: var(--dim); }
+  #staat.fout { color: var(--rood); }
+  #substaat { text-align: center; font-size: 13px; color: var(--dim); min-height: 18px; margin-bottom: 14px; }
+
+  /* --- Knoppen -------------------------------------------------- */
+  .rij { display: flex; gap: 10px; margin-bottom: 10px; }
+  button {
+    flex: 1; padding: 16px; font-size: 16px; font-weight: 700;
+    border-radius: 14px; border: 1px solid var(--line);
+    background: var(--panel); color: var(--tekst);
+    cursor: pointer; touch-action: manipulation;
+  }
+  button:disabled { opacity: .35; }
+  #btnAan  { border-color: rgba(74,222,128,.5); color: var(--groen); }
+  #btnUit  { border-color: rgba(248,113,113,.4); color: var(--rood); }
+  #btnVerbind { background: var(--amber); color: #1a1205; border: none; }
+
+  /* --- Log ------------------------------------------------------ */
+  details { margin-top: 10px; }
+  summary { color: var(--dim); font-size: 13px; cursor: pointer; padding: 6px 2px; }
+  #log {
+    font-family: ui-monospace, Menlo, Consolas, monospace;
+    font-size: 11px; line-height: 1.7; color: var(--dim);
+    background: var(--panel); border: 1px solid var(--line); border-radius: 10px;
+    padding: 10px; max-height: 34dvh; overflow-y: auto; white-space: pre-wrap;
+    overflow-wrap: anywhere;
+  }
+  #log .tx { color: var(--amber); }
+  #log .rx { color: var(--groen); }
+  #log .err { color: var(--rood); }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Venus <b>EPS</b> noodstroom</h1>
+  <div id="devnaam"></div>
+</header>
+
+<div id="socketwrap">
+  <div id="socket" role="button" aria-label="EPS schakelen" tabindex="0">
+    <div class="gat links"></div>
+    <div class="gat rechts"></div>
+  </div>
+</div>
+
+<div id="staat" class="uit">Niet verbonden</div>
+<div id="substaat">Verbind eerst met de batterij</div>
+
+<div class="rij">
+  <button id="btnVerbind">Verbind met batterij</button>
+</div>
+<div class="rij">
+  <button id="btnAan" disabled>EPS aan</button>
+  <button id="btnUit" disabled>EPS uit</button>
+</div>
+
+<details>
+  <summary>Technische log (TX/RX frames)</summary>
+  <div id="log"></div>
+</details>
+
+<script>
+"use strict";
+/* =============================================================
+   Marstek Venus E — EPS bediening via Web Bluetooth
+   Protocol: HM-frame [0x73][Len][0x23][Cmd][Payload][XOR-chk]
+   EPS: cmd 0x0F, payload 0x01 = aan, 0x00 = uit
+   Service ff00, write ff01, notify ff02
+   ============================================================= */
+const SVC  = 0xff00;
+const CHRW = 0xff01;
+const CHRN = 0xff02;
+const CMD_EPS = 0x0f;
+
+let device = null, server = null, chWrite = null, chNotify = null;
+let epsStaat = null;   // null = onbekend, true/false = laatst verstuurde/gelezen staat
+let bezig = false;
+
+const $ = id => document.getElementById(id);
+const socket = $("socket"), staat = $("staat"), substaat = $("substaat");
+const btnAan = $("btnAan"), btnUit = $("btnUit"), btnVerbind = $("btnVerbind");
+
+function log(msg, cls) {
+  const el = $("log");
+  const t = new Date().toLocaleTimeString("nl-BE");
+  el.innerHTML += `<span class="${cls||""}">[${t}] ${msg}</span>\n`;
+  el.scrollTop = el.scrollHeight;
+}
+const hex = bytes => [...bytes].map(b => b.toString(16).padStart(2,"0").toUpperCase()).join(" ");
+
+function maakFrame(cmd, payload) {
+  // Lengte-byte = framelengte + 1 (gedrag van de officiële app / test tool)
+  const body = [0x73, 0x00, 0x23, cmd, ...payload];
+  body[1] = body.length + 1;
+  let chk = 0;
+  for (const b of body) chk ^= b;
+  return new Uint8Array([...body, chk]);
+}
+
+function zetUI() {
+  const verbonden = !!(server && server.connected);
+  btnAan.disabled = btnUit.disabled = !verbonden || bezig;
+  btnVerbind.textContent = verbonden ? "Verbinding verbreken" : "Verbind met batterij";
+  socket.classList.toggle("bezig", bezig);
+  socket.classList.toggle("aan", epsStaat === true && !bezig);
+
+  if (!verbonden) {
+    staat.textContent = "Niet verbonden"; staat.className = "uit";
+    substaat.textContent = "Verbind eerst met de batterij";
+  } else if (bezig) {
+    staat.textContent = "Bezig..."; staat.className = "uit";
+    substaat.textContent = "Commando wordt verstuurd";
+  } else if (epsStaat === true) {
+    staat.textContent = "EPS AAN"; staat.className = "aan";
+    substaat.textContent = "Backup-stopcontact levert stroom";
+  } else if (epsStaat === false) {
+    staat.textContent = "EPS UIT"; staat.className = "uit";
+    substaat.textContent = "Backup-stopcontact is uitgeschakeld";
+  } else {
+    staat.textContent = "Verbonden"; staat.className = "uit";
+    substaat.textContent = "EPS-staat onbekend — kies aan of uit";
+  }
+}
+
+async function verbind() {
+  if (server && server.connected) { device.gatt.disconnect(); return; }
+  if (!navigator.bluetooth) {
+    staat.textContent = "Geen Web Bluetooth"; staat.className = "fout";
+    substaat.textContent = "Gebruik Chrome op Android of PC (geen Firefox/iPhone)";
+    return;
+  }
+  try {
+    device = await navigator.bluetooth.requestDevice({
+      filters: [{ namePrefix: "MST" }],
+      optionalServices: [SVC]
+    });
+    device.addEventListener("gattserverdisconnected", () => {
+      log("Verbinding verbroken", "err");
+      chWrite = chNotify = null; bezig = false; zetUI();
+    });
+    log("Verbinden met " + device.name + " ...");
+    server = await device.gatt.connect();
+    const svc = await server.getPrimaryService(SVC);
+    chWrite = await svc.getCharacteristic(CHRW);
+    try {
+      chNotify = await svc.getCharacteristic(CHRN);
+      await chNotify.startNotifications();
+      chNotify.addEventListener("characteristicvaluechanged", e => {
+        const v = new Uint8Array(e.target.value.buffer);
+        log("RX: " + hex(v), "rx");
+        // Response op ons EPS-commando? Dan status overnemen (byte 4).
+        if (v.length >= 5 && v[0] === 0x73 && v[3] === CMD_EPS) {
+          epsStaat = (v[4] === 0x01);
+          log("EPS-status uit response: " + (epsStaat ? "AAN" : "UIT"));
+          zetUI();
+        }
+      });
+      log("Notificaties actief");
+    } catch (e) { log("Geen notify-characteristic: " + e.message, "err"); }
+    $("devnaam").textContent = device.name;
+    log("Verbonden");
+    zetUI();
+  } catch (e) {
+    log("Fout: " + e.message, "err");
+    zetUI();
+  }
+}
+
+async function stuurEps(aan) {
+  if (!chWrite || bezig) return;
+  bezig = true; zetUI();
+  try {
+    const frame = maakFrame(CMD_EPS, [aan ? 0x01 : 0x00]);
+    log("TX: " + hex(frame), "tx");
+    await chWrite.writeValue(frame);
+    epsStaat = aan;
+    log("EPS " + (aan ? "AAN" : "UIT") + " verstuurd");
+  } catch (e) {
+    log("Verzenden mislukt: " + e.message, "err");
+    staat.className = "fout";
+  } finally {
+    bezig = false; zetUI();
+  }
+}
+
+btnVerbind.addEventListener("click", verbind);
+btnAan.addEventListener("click", () => stuurEps(true));
+btnUit.addEventListener("click", () => stuurEps(false));
+/* Het stopcontact zelf is een toggle: */
+const socketKlik = () => {
+  if (!server || !server.connected) { verbind(); return; }
+  if (epsStaat === null) return;      // eerst expliciet aan of uit kiezen
+  stuurEps(!epsStaat);
+};
+socket.addEventListener("click", socketKlik);
+socket.addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); socketKlik(); } });
+
+zetUI();
+log("Klaar. Sluit eerst de Marstek app volledig af (1 BLE-verbinding tegelijk).");
+
+/* PWA: service worker registreren zodat de app offline werkt */
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker.register("sw.js")
+    .then(() => log("Offline-modus actief (service worker)"))
+    .catch((e) => log("Service worker niet geladen: " + e.message, "err"));
+}
+</script>
+</body>
+</html>
