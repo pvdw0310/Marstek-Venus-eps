@@ -6,6 +6,9 @@
 
 ## 🇳🇱 Nederlands
 
+> **🚀 Direct starten:** open **[https://pvdw0310.github.io/Venus-eps/](https://pvdw0310.github.io/Venus-eps/)** in Chrome of Edge
+> *(let op de hoofdletter V — het adres is hoofdlettergevoelig)*
+
 Een lichtgewicht web-app (PWA) om het **backup-stopcontact (EPS)** van een **Marstek Venus E** thuisbatterij aan of uit te schakelen via **Bluetooth (BLE)** — rechtstreeks vanaf je Android-telefoon of PC, zonder de Marstek-app, zonder cloud en zonder internet.
 
 Gemaakt voor het scenario waarvoor EPS bedoeld is: een stroomuitval. De app opent volledig offline (service worker), gebruikt een donker thema dat leesbaar is in het donker, en praat rechtstreeks via BLE met de batterij.
@@ -27,7 +30,7 @@ Gemaakt voor het scenario waarvoor EPS bedoeld is: een stroomuitval. De app open
 
 ### Installatie op Android
 
-1. Open de app-URL in Chrome
+1. Open [https://pvdw0310.github.io/Venus-eps/](https://pvdw0310.github.io/Venus-eps/) in Chrome
 2. Menu **⋮** → **App installeren** (of "Toevoegen aan startscherm")
 3. Open de app één keer met internet zodat de offline-cache gevuld wordt
 4. Klaar — de app opent voortaan ook zonder enige verbinding
@@ -66,6 +69,9 @@ Het BLE-protocol is uitgezocht door [Remko Weijnen](https://github.com/rweijnen/
 
 ## 🇬🇧 English
 
+> **🚀 Launch directly:** open **[https://pvdw0310.github.io/Venus-eps/](https://pvdw0310.github.io/Venus-eps/)** in Chrome or Edge
+> *(note the capital V — the address is case-sensitive)*
+
 A lightweight web app (PWA) to switch the **backup outlet (EPS)** of a **Marstek Venus E** home battery on or off via **Bluetooth (BLE)** — straight from your Android phone or PC, without the Marstek app, without cloud, and without internet.
 
 Built for the exact scenario EPS exists for: a power outage. The app opens fully offline (service worker), uses a dark theme that's readable in the dark, and talks to the battery directly over BLE.
@@ -87,7 +93,7 @@ Built for the exact scenario EPS exists for: a power outage. The app opens fully
 
 ### Install on Android
 
-1. Open the app URL in Chrome
+1. Open [https://pvdw0310.github.io/Venus-eps/](https://pvdw0310.github.io/Venus-eps/) in Chrome
 2. Menu **⋮** → **Install app** (or "Add to home screen")
 3. Open the app once while online so the offline cache gets populated
 4. Done — the app now opens without any connection at all
