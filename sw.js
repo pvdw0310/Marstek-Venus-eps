@@ -1,7 +1,7 @@
 /* Venus EPS — service worker
    Cachet de volledige app zodat hij ook zonder internet opent
    (Bluetooth zelf heeft sowieso geen netwerk nodig). */
-const CACHE = "venus-eps-v2";
+const CACHE = "venus-eps-v3";
 const BESTANDEN = [
   "./",
   "./index.html",

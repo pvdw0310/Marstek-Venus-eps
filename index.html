@@ -36,19 +36,22 @@
     max-width: 480px; margin: 0 auto;
   }
 
-  /* --- Taalschakelaar rechtsboven ------------------------------ */
+  /* --- Taalschakelaar: eigen rij bovenaan, rechts uitgelijnd --- */
   #taalbalk {
-    position: absolute; top: calc(10px + env(safe-area-inset-top)); right: 14px;
+    display: flex; justify-content: flex-end; gap: 2px;
+    margin-bottom: 14px;
+  }
+  #taalbalk .schakelaar {
     display: flex; gap: 2px; background: var(--panel);
     border: 1px solid var(--line); border-radius: 9px; overflow: hidden;
   }
   #taalbalk button {
-    all: unset; padding: 6px 11px; font-size: 12px; font-weight: 700;
+    all: unset; padding: 6px 13px; font-size: 12px; font-weight: 700;
     color: var(--dim); cursor: pointer; letter-spacing: .04em;
   }
   #taalbalk button.actief { background: var(--amber); color: #1a1205; }
 
-  header { text-align: center; margin-bottom: 8px; margin-top: 6px; }
+  header { text-align: center; margin-bottom: 8px; }
   header h1 {
     font-size: 15px; font-weight: 600; letter-spacing: .22em;
     text-transform: uppercase; color: var(--dim);
@@ -135,8 +138,10 @@
 <body>
 
 <div id="taalbalk">
-  <button id="btnNL" data-taal="nl">NL</button>
-  <button id="btnEN" data-taal="en">EN</button>
+  <div class="schakelaar">
+    <button id="btnNL" data-taal="nl">NL</button>
+    <button id="btnEN" data-taal="en">EN</button>
+  </div>
 </div>
 
 <header>
