@@ -38,7 +38,7 @@ Gemaakt voor het scenario waarvoor EPS bedoeld is: een stroomuitval. De app open
 ### Gebruik
 
 1. **Sluit de officiële Marstek app volledig af** — de batterij accepteert maar één BLE-verbinding tegelijk
-2. Tik op **"Verbind met batterij"** en kies je Venus (naam begint met `MST\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\_`)
+2. Tik op **"Verbind met batterij"** en kies je Venus (naam begint met `MST\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\_`)
 3. Tik **"EPS aan"** — het backup-stopcontact levert nu stroom
 4. Het stopcontact-icoon zelf werkt daarna als toggle
 
@@ -69,8 +69,8 @@ Het BLE-protocol is uitgezocht door [Remko Weijnen](https://github.com/rweijnen/
 
 ## 🇬🇧 English
 
-> \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*🚀 Launch directly:\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\* open \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\[https://pvdw0310.github.io/Marstek-Venus-eps/](https://pvdw0310.github.io/Marstek-Venus-eps/)\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\* in Chrome or Edge
-> \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*(note the capital V — the address is case-sensitive)\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*
+🚀 Launch directly: open https://pvdw0310.github.io/Marstek-Venus-eps/in Chrome or Edge
+(note the capital V — the address is case-sensitive)
 
 A lightweight web app (PWA) to switch the **backup outlet (EPS)** of a **Marstek Venus E** home battery on or off via **Bluetooth (BLE)** — straight from your Android phone or PC, without the Marstek app, without cloud, and without internet.
 
@@ -101,7 +101,7 @@ Built for the exact scenario EPS exists for: a power outage. The app opens fully
 ### Usage
 
 1. **Fully close the official Marstek app** — the battery accepts only one BLE connection at a time
-2. Tap **"Verbind met batterij"** (Connect) and pick your Venus (name starts with `MST\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\_`)
+2. Tap **"Verbind met batterij"** (Connect) and pick your Venus (name starts with `MST\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\_`)
 3. Tap **"EPS aan"** (EPS on) — the backup outlet now supplies power
 4. The socket icon itself acts as a toggle from then on
 
